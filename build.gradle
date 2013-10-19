@@ -1,0 +1,92 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.+'
+    }
+}
+apply plugin: 'android-library'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+version = "0.2.0"
+group = "de.kalass"
+
+configurations {
+    archives {
+        extendsFrom configurations.default
+    }
+}
+
+signing {
+    required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        repository(url: "file://localhost/Users/klas/localMavenRepo/")
+
+        //beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+
+        pom.project {
+            name 'Simple Content Provider'
+            packaging 'aar'
+            description 'This library aims to make creation of private and public ContentProviders trivial'
+            url 'https://github.com/mitmel/SimpleContentProvider'
+
+            scm {
+                url 'scm:git@github.com:mitmel/SimpleContentProvider.git'
+                connection 'scm:git@github.com:mitmel/SimpleContentProvider.git'
+                developerConnection 'scm:git@github.com:mitmel/SimpleContentProvider.git'
+            }
+
+            licenses {
+                license {
+                    name 'GNU LIBRARY GENERAL PUBLIC LICENSE v2'
+                    url 'http://www.gnu.org/licenses/old-licenses/lgpl-2.0'
+                    distribution 'repo'
+                }
+            }
+
+            developers {
+                developer {
+                    id 'xxv'
+                    name 'Steve Pomeroy'
+                    email 'steve@staticfree.info'
+                }
+                developer {
+                    id 'felipepedroso'
+                    name 'Felipe Pedroso'
+                }
+                developer {
+                    id 'kkalass'
+                    name 'Klas Kalass'
+                    email 'klas.kalass@web.de'
+		}
+            }
+        }
+    }
+}
+
+android {
+    compileSdkVersion 'android-18'
+    buildToolsVersion '18.1.0'
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+
+        instrumentTest.setRoot('tests')
+    }
+}

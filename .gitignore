@@ -4,5 +4,8 @@ doc/
 .project
 test/.project
 test/.classpath
+.gradle/
+build/
+*~
 local.properties
 build.xml
