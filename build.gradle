@@ -73,8 +73,8 @@ uploadArchives {
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '20'
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
