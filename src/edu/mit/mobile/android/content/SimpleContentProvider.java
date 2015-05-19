@@ -17,6 +17,7 @@ package edu.mit.mobile.android.content;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -214,6 +215,18 @@ public abstract class SimpleContentProvider extends ContentProvider {
         mDBHelperMapper = new DBHelperMapper();
         mDBName = dbName;
         mDBVersion = dbVersion;
+    }
+
+    protected String getDBName() {
+        return mDBName;
+    }
+
+    protected int getDBVersion() {
+        return mDBVersion;
+    }
+
+    public List<DBHelper> getDBHelpers() {
+        return Collections.unmodifiableList(mDBHelpers);
     }
 
     /**
@@ -669,7 +682,7 @@ public abstract class SimpleContentProvider extends ContentProvider {
      * @return
      */
     protected DatabaseOpenHelper createDatabaseOpenHelper() {
-        return new DatabaseOpenHelper(getContext(), mDBName, mDBVersion);
+        return new DatabaseOpenHelper(getContext(), mDBName, mDBVersion, mDBHelpers);
     }
 
     // //////////////////// internal classes
@@ -681,9 +694,18 @@ public abstract class SimpleContentProvider extends ContentProvider {
      * @author <a href="mailto:spomeroy@mit.edu">Steve Pomeroy</a>
      *
      */
-    protected class DatabaseOpenHelper extends SQLiteOpenHelper {
-        public DatabaseOpenHelper(Context context, String name, int version) {
+    protected static class DatabaseOpenHelper extends SQLiteOpenHelper {
+        private final List<DBHelper> mDBHelpers;
+        private final Context context;
+
+        public DatabaseOpenHelper(Context context, String name, int version, List<DBHelper> dbHelpers) {
             super(context, name, null, version);
+            mDBHelpers = dbHelpers;
+            this.context = context;
+        }
+
+        protected Context getContext() {
+            return context;
         }
 
         @Override
